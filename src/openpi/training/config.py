@@ -847,6 +847,30 @@ _CONFIGS = [
         ema_decay=None,
     ),
     TrainConfig(
+        name="pi0_galbot_sps",
+        model=pi0_config.Pi0Config(paligemma_variant="gemma_2b_lora", action_expert_variant="gemma_300m_lora"),
+        data=LeRobotGalbotDataConfig(
+            repo_id="/mnt/cpfs/zjg/dataset/sps_galbot_0001/sps_pick_4011VC010001B",
+            base_config=DataConfig(prompt_from_task=True),
+            extra_delta_transform=True,
+        ),
+        exp_name="galbot_4011VC010001B",
+        checkpoint_base_dir="/mnt/cpfs/zjg/openpi/ckpts/sps_0001_random_img/",
+        batch_size=32,
+        num_workers=16,
+        save_interval=1000,
+        keep_period=2000,
+        overwrite=False,    
+        resume=True,
+        weight_loader=weight_loaders.CheckpointWeightLoader("/mnt/cpfs/zjg/openpi/ckpts/pi0_base/params"),
+        num_train_steps=20_000,
+        freeze_filter=pi0_config.Pi0Config(
+            paligemma_variant="gemma_2b_lora", action_expert_variant="gemma_300m_lora"
+        ).get_freeze_filter(),
+        # Turn off EMA for LoRA finetuning.
+        ema_decay=None,
+    ),
+    TrainConfig(
         name="pi0_galbot_low_mem_finetune",
         model=pi0_config.Pi0Config(paligemma_variant="gemma_2b_lora", action_expert_variant="gemma_300m_lora"),
         data=LeRobotGalbotDataConfig(
